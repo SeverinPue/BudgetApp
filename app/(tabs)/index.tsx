@@ -3,7 +3,20 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useBudget } from '../../context/Context';
 
 export default function BudgetListScreen() {
-  const { expenses } = useBudget();
+  const { expenses, settings } = useBudget();
+
+  const formatAmount = (amount: number) => {
+    let finalAmount = amount;
+    if (settings.roundAmounts) {
+      finalAmount = Math.round(finalAmount);
+    }
+
+    if (settings.showDecimals) {
+      return `${finalAmount.toFixed(2)} CHF`;
+    } else {
+      return `${Math.floor(finalAmount)} CHF`;
+    }
+  };
 
   const totalAmount = expenses.reduce((sum, item) => sum + item.amount, 0);
 
@@ -20,7 +33,7 @@ export default function BudgetListScreen() {
               {item.description ? <Text style={styles.descText}>{item.description}</Text> : null}
             </View>
             <View style={{ alignItems: 'flex-end' }}>
-              <Text style={styles.amountText}>{item.amount.toFixed(2)} CHF</Text>
+              <Text style={styles.amountText}>{formatAmount(item.amount)}</Text>
               <Text style={styles.dateText}>{item.date}</Text>
             </View>
           </View>
@@ -29,11 +42,11 @@ export default function BudgetListScreen() {
           <Text style={styles.emptyText}>Noch keine Ausgaben vorhanden. Tippe oben auf das "+".</Text>
         }
       />
+
       <View style={styles.totalContainer}>
         <Text style={styles.totalLabel}>Total:</Text>
-        <Text style={styles.totalValue}>{totalAmount.toFixed(2)} CHF</Text>
+        <Text style={styles.totalValue}>{formatAmount(totalAmount)}</Text>
       </View>
-
     </View>
   );
 }

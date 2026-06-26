@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useBudget } from '../../context/Context';
+import { triggerAdvancedNotification } from '../../services/NotificationService';
 
 const CATEGORIES = ['Lebensmittel/Haushalt', 'Restaurant & Café', 'Hobbies', 'Ausgang', 'Sonstiges'];
 
@@ -26,6 +27,11 @@ export default function AddExpenseScreen() {
       amount: parsedAmount,
       description: description || undefined
     });
+
+    triggerAdvancedNotification(
+      'Ausgabe erfasst! 💸',
+      `${title} (${parsedAmount.toFixed(2)} CHF) wurde erfolgreich gespeichert.`
+    );
 
     router.back();
   };
@@ -54,7 +60,6 @@ export default function AddExpenseScreen() {
         onChangeText={setTitle}
         placeholder="z. B. Migros, Konzertticket"
       />
-
       <Text style={styles.label}>Betrag (CHF):</Text>
       <TextInput
         style={styles.input}
